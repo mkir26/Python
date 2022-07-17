@@ -1,3 +1,6 @@
+from ast import Try
+
+
 hrs = input('Enter Hours:')
 h = float(hrs)
 rate = input('Enter Rate per hours:')
