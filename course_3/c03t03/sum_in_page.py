@@ -1,4 +1,4 @@
-# Подсчитываем сумму всех чисел на веб - странице
+# Подсчитываем сумму всех чисел в таблице (<span>) на веб - странице
 # Используется внешняя библиотека BeautifulSoup ./bs4
 import urllib.request, urllib.error, urllib.response, urllib.parse
 from bs4 import BeautifulSoup
@@ -9,8 +9,7 @@ print('2 - http://py4e-data.dr-chuck.net/comments_1593845.html')
 print('3 - other url [IN PROGRESS]')
 ch = input(':')
 # Фильтруем пользовательский ввод. Ручной ввод URL не реализован.
-try:
-    int(ch)
+try: int(ch)
 except:
     print('Please, enter 1, 2 or 3. Try again.')
     quit()
@@ -22,5 +21,21 @@ else: url = 'http://py4e-data.dr-chuck.net/comments_1593845.html'
 # Получаем и парсим веб - страницу
 html = urllib.request.urlopen(url).read()
 soup = BeautifulSoup(html, 'html.parser')
-
-print(soup)
+# Ищем теги <span>
+tags = soup('span')
+# Инициализируем счетчики
+count = 0
+summ = 0
+# Проходим все нужные теги
+for tag in tags:
+# Проверяем на цифры
+    try: int(tag.string)
+    except:
+        print('Oops, parsing error. IDK')
+        quit()
+# Подсчитываем количество и сумму цифр
+    count += 1
+    summ += int(tag.string)
+# Выводим результат
+print('Count:', count)
+print('Sum: ', summ)
