@@ -30,10 +30,10 @@ for i in range(1, p): count *= i
 if (count + 1)%(p ** 2) == 0: print('Congratulations! You number:', p, 'is a Wilson Prime!')
 else: print('Oh, no. You number:', p, 'is not a Wilsons Prime. Try harder!')
 
-# Код написанный для CodeWars. Не прошел проверку случайными числами, по причине таймаута.
-# def am_i_wilson(n):
+# Код написанный для CodeWars. Числа более 1000 не проверяются, нет смысла.
+#def am_i_wilson(n):
 #    import math
-#    if n <= 1: return False
+#    if n <= 1 or n > 1000: return False
 #    for pr in range(2,int(n**0.5)+1):
 #        if pr%n==0: return False
 #    if (math.factorial(n - 1) + 1) % (n ** 2) == 0: return True
