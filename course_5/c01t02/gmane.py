@@ -1,3 +1,6 @@
+# Скачивание текста электронных писем из http://mbox.dr-chuck.net/sakai.devel/
+# Первичный анализ и парсинг текста извлеченных писем (от, кому, тема м пр.)
+# Запись результатов парсинга в базу данных SQLite
 import sqlite3
 import time
 import ssl
@@ -7,14 +10,14 @@ from urllib.parse import urlparse
 import re
 from datetime import datetime, timedelta
 
-# Not all systems have this so conditionally define parser
+# Проверка на доступность импорта модуля
 try:
     import dateutil.parser as parser
 except:
     pass
 
+# Функция парсинга даты
 def parsemaildate(md) :
-    # See if we have dateutil
     try:
         pdate = parser.parse(tdate)
         test_at = pdate.isoformat()
@@ -22,7 +25,7 @@ def parsemaildate(md) :
     except:
         pass
 
-    # Non-dateutil version - we try our best
+# "Ручной" парсинг даты при отсутствии требуемого модуля
 
     pieces = md.split()
     notz = " ".join(pieces[:4]).strip()
@@ -57,7 +60,7 @@ def parsemaildate(md) :
 
     return iso+tz
 
-# Ignore SSL certificate errors
+# Обход ССЛ сертификата
 ctx = ssl.create_default_context()
 ctx.check_hostname = False
 ctx.verify_mode = ssl.CERT_NONE
@@ -67,11 +70,12 @@ cur = conn.cursor()
 
 baseurl = "http://mbox.dr-chuck.net/sakai.devel/"
 
+# Подготовка таблиц для записи результатов
 cur.execute('''CREATE TABLE IF NOT EXISTS Messages
     (id INTEGER UNIQUE, email TEXT, sent_at TEXT,
      subject TEXT, headers TEXT, body TEXT)''')
 
-# Pick up where we left off
+# Проверка на наличие данных в тадлице с иницииацией продолжения работы
 start = None
 cur.execute('SELECT max(id) FROM Messages' )
 try:
@@ -109,7 +113,7 @@ while True:
     text = "None"
     try:
         # Open with a timeout of 30 seconds
-        document = urllib.request.urlopen(url, None, 30, context=ctx)
+        document = urllib.request.urlopen(url, None, 1, context=ctx)
         text = document.read().decode()
         if document.getcode() != 200 :
             print("Error code=",document.getcode(), url)
